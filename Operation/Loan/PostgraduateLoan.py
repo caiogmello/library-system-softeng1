@@ -1,0 +1,2 @@
+class PostgraduateLoan:
+    pass
