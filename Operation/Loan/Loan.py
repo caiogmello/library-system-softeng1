@@ -1,6 +1,10 @@
-from Operation.Loan.LoanType import LoanType
+from abc import ABC, abstractmethod
+from Book.Book import Book
+from Library.Library import Library
 
-class Loan:
-    def __init__(self, loanType: LoanType) -> None:
-        self._loanType: LoanType = loanType
+class Loan(ABC):
+
+    @abstractmethod
+    def exec(self, book:Book, maxLoanTimeDays: int, library: Library) -> None:
+        pass
 
