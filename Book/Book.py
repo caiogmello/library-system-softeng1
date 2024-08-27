@@ -1,6 +1,7 @@
 from Book.BookItem import BookItem
+from Observer.Subject import Subject
 
-class Book:
+class Book(Subject):
     _id: str 
     _title: str 
     _publisher: str 
@@ -8,6 +9,8 @@ class Book:
     _edition: str 
     _year: str 
     _copies: list[BookItem]
+    _reserved: list[BookItem]
+    _loaned: list[BookItem]
     
     def __init__(self, bookId: str, title: str, publisher: str, authors: list[str],
                   edition: str, year: str) -> None:
@@ -60,6 +63,24 @@ class Book:
             return self._copies.pop()
         else:
             return None
+    
+    def reserveAnyCopy(self) -> BookItem:
+        copy = self.removeAnyCopy()
+        if copy is None:
+            raise Exception(f"Nenhuma cópia de livro ID={self._id} disponível para reserva")
+        self._reserved.append(copy)
+        
+        # notify of duplicate reservations
+        if len(self._reserved) > 1:
+            self.notifyObservers()
+        return copy
+
+    def loanAnyCopy(self) -> BookItem:
+        copy = self.removeAnyCopy()
+        if copy is None:
+            raise Exception(f"Nenhuma cópia de livro ID={self._id} disponível para empréstimo")
+        self._loaned.append(copy)
+        return copy
 
     def __str__(self) -> str:
         return f"""

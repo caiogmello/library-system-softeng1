@@ -50,20 +50,14 @@ class Library:
             return False
         libraryBook.removeCopyById(copyId)
     
-    def reserveBook(self, user: User, bookId: int) -> bool:
-        """
-        Returns the operation's success
-        """
+    def reserveBook(self, user: User, bookId: int) -> None:
         book = self.getBookById(bookId)
         if book is None:
-            return False
-        copy = book.removeAnyCopy()
-        if copy is None:
-            return False
+            raise Exception(f"Livro ID={bookId} não encontrado.")
+        copy = book.reserveAnyCopy()
         if bookId not in self._reservations.keys():
             self._reservations[bookId] = []
         self._reservations[bookId].append(ReservationItem(user, copy))
-        return True
     
     # def unreserveBook(self, user: User, book: Book) -> bool:
     #     if book.getId() not in self._reservations.keys():
@@ -75,16 +69,11 @@ class Library:
     #     self._reservations[book.getId()].remove(user)
     #     return True
 
-    def loanBook(self, user: User, bookId: int, loanTimeDays: int) -> bool:
-        """
-        Returns the operation's success
-        """
+    def loanBook(self, user: User, bookId: int, loanTimeDays: int):
         book = self.getBookById(bookId)
         if book is None:
-            return False
-        copy = book.removeAnyCopy()
-        if copy is None:
-            return False
+            raise Exception(f"Livro ID={bookId} não encontrado.")
+        copy = book.loanAnyCopy()
         if bookId not in self._loans.keys():
             self._loans[bookId] = []
         self._loans[bookId].append(LoanItem(user, copy, date.today(), date.today() + timedelta(days=loanTimeDays)))
