@@ -1,2 +1,4 @@
-class PostgraduateLoan:
+from Loan.LoanType import LoanType
+
+class PostgraduateLoan(LoanType):
     pass
