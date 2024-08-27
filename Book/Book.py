@@ -1,19 +1,30 @@
 from datetime import datetime
 
 class Book:
+
+    _id: int 
+    _exampleId: int 
+    _title: str 
+    _publisher: str 
+    _authors: list[str] 
+    _edition: str 
+    _year: datetime 
+    
+    
     def __init__(self, bookId: int, exampleId: int,
                  title: str, publisher: str, authors: list[str],
                   edition: str, year: datetime) -> None:
-        self._bookId: int = bookId
-        self._exampleId: int = exampleId
-        self._title: str = title
-        self._publisher: str = publisher
-        self._authors: list[str] = authors
-        self._edition: str = edition
-        self._year: datetime = year
+        
+        self._id = bookId
+        self._exampleId = exampleId
+        self._title = title
+        self._publisher = publisher
+        self._authors= authors
+        self._edition = edition
+        self._year = year
     
-    def getBookId(self) -> int:
-        return self._bookId
+    def getId(self) -> int:
+        return self._id
     
     def getExampleId(self) -> int:
         return self._exampleId
@@ -35,7 +46,7 @@ class Book:
     
     def __str__(self) -> str:
         return f"""
-            Book ID: {self._bookId}
+            Book ID: {self._id}
             Example ID: {self._exampleId}
             Title: {self._title}
             Publisher: {self._publisher}
