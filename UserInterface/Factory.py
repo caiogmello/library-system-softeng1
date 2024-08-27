@@ -12,8 +12,8 @@ class Factory:
     @staticmethod
     def createBookFromDict(bookDict: dict) -> Book:
         return Factory.createBook(
-            bookDict["bookId"],
-            bookDict["exampleId"],
+            bookDict["id"],
+            bookDict["copyId"],
             bookDict["title"],
             bookDict["publisher"],
             bookDict["authors"],
