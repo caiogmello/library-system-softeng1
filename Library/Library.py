@@ -12,7 +12,7 @@ class Library:
     """
     _copies: dict[int, list[Book]] = {} # bookId -> list of available copies
     _operations: list[Operation] = [] # operations performed in the library
-    _reservedBooks: dict[Book, User] = {} # reserved book -> user
+    _reservedBooks: dict[int, list[User]] = {} # bookId -> users
 
     @staticmethod
     def getLibrary() -> "Library":
@@ -53,7 +53,7 @@ class Library:
             return self._copies[bookId][0]
    
         return None
-    
+
     def getBookByCopyId(self, copyId: int) -> Union[Book, None]:
         for book in self._books.keys():
             if book.getCopyId() == copyId:
@@ -61,18 +61,63 @@ class Library:
         return None
     
     def getAvailableBooks(self) -> list[Book]:
-        return [book for book in self._books if self._books[book]]
+        return [book for book in self._books.keys() if self._books[book]]
     
     def getUnavailableBooks(self) -> list[Book]:
-        return [book for book in self._books if not self._books[book]]
+        return [book for book in self._books.keys() if not self._books[book]]
     
-    def getAvailableBookCopies(self, book: Union[Book, None]) -> int:
+    def getAvailableBookCopies(self, book: Union[Book, None]) -> list[Book]:
         if book is None:
-            return 0
-        return len(self._copies[book.getId()])
+            return []
+        return self._copies[book]
     
-    def getTotalBookCopies(self, book: Union[Book, None]) -> int:
+    def getTotalBookCopies(self, book: Union[Book, None]) -> list[Book]:
         if book is None:
-            return 0
-        return sum([1 for b in self._books.keys() if b.getId() == book.getId()])
+            return []
+        return [b for b in self._books.keys() if b.getId() == book.getId()]
+    
+    def reserveBook(self, user: User, bookId: int) -> bool:
+        if bookId not in self._reservedBooks.keys():
+            return False
+
+        if user in self._reservedBooks[bookId]:
+            return False
         
+        self._reservedBooks[bookId].append(user)
+        return True
+    
+    def unreserveBook(self, user: User, book: Book) -> bool:
+        if book.getId() not in self._reservedBooks.keys():
+            return False
+        
+        if user not in self._reservedBooks[book.getId()]:
+            return False
+        
+        self._reservedBooks[book.getId()].remove(user)
+        return True
+
+    def getReservationsCount(self, book: Book) -> int:
+        if book.getId() not in self._reservedBooks.keys():
+            return 0
+        return len(self._reservedBooks[book.getId()])
+    
+    def getReservations(self, book: Book) -> list[User]:
+        if book.getId() not in self._reservedBooks.keys():
+            return []
+        return self._reservedBooks[book.getId()]
+    
+    def getCopyInfo(self, copyId: int) -> str:
+        book = self.getBookByCopyId(copyId)
+        if book is None:
+            return f"Copy {copyId} not found."
+        if self._books[book]:
+            return f"   - Status: Disponível."
+        else:
+            return f""""
+                    - Status: Indisponível.
+                    Informações do empréstimo:	
+                    - Usuário: {"Jonh Doe"}
+                    - Data de empréstimo: {"01/01/2021"}
+                    - Data prevista de devolução: {"01/02/2021"}
+                    """   
+    
