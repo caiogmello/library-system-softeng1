@@ -1,7 +1,7 @@
 from typing import Final
 
 from Book.Book import Book
-from Operation.Loan import Loan
+from Operation.Loan.Loan import Loan
 from Operation.Reservation import Reservation
 from Operation.Devolution import Devolution
 from Operation.Exception import OperationException
