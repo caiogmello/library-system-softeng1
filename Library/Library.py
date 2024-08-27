@@ -1,18 +1,19 @@
+from typing import Union
+from datetime import date, timedelta
+
 from User.User import User
 from Book.Book import Book
 from Operation.Operation import Operation
-from typing import Union
 from UserInterface.Factory import Factory
-from collections import deque
+from Library.LoanItem import LoanItem
+from Library.ReservationItem import ReservationItem
+
 class Library:
     _instance: Union["Library", None] = None
-    _books: dict[Book, bool] = {} # book (copy) -> isAvailable
-    """
-    copyId is unique, bookId not necessarily
-    """
-    _copies: dict[int, list[Book]] = {} # bookId -> list of available copies
+    _books: list[Book] = []
     _operations: list[Operation] = [] # operations performed in the library
-    _reservedBooks: dict[int, list[User]] = {} # bookId -> users
+    _reservations: dict[int, list[ReservationItem]] = {} # bookId -> reservations
+    _loans: dict[int, list[LoanItem]] = {} # bookId -> loans
 
     @staticmethod
     def getLibrary() -> "Library":
@@ -23,101 +24,125 @@ class Library:
     def __init__(self):
         pass
 
-    def addBook(self, book: Book) -> None:
+    def getBookById(self, bookId: int) -> Union[Book, None]:
+        for book in self._books:
+            if book.getId() == bookId:
+                return book
+        return None
+
+    def addBook(self, book: Book, copyId: int) -> None:
         """
         if the copy is already in the library, it will not be added again
         """
-        if self.getBookByCopyId(book.getCopyId()) is not None:
-            book = self.getBookByCopyId(book.getCopyId())
-            if self._books[book]:
-                return
-            
-        self._books[book] = True
-        if book.getId() not in self._copies.keys():
-            self._copies[book.getId()] = []
-        self._copies[book.getId()].append(book)
+        libraryBook = self.getBookById(book.getId())
+        if libraryBook is None:
+            self._books.append(book)
+            libraryBook = book
+        libraryBook.addCopy(copyId)
 
     def addBookByDict(self, bookDict: dict) -> None:
         book = Factory.createBookFromDict(bookDict)
         self.addBook(book)
     
-    def removeBook(self, book: Union[Book, None]) -> bool:
-        if book is not None and self._books[book]:
-            self._books[book] = False
-            self._copies[book.getId()].remove(book)
-            return True
-        return False
-    
-    def getBookById(self, bookId: int) -> Union[Book, None]:
-        if bookId in self._copies.keys() and len(self._copies[bookId]) > 0:
-            return self._copies[bookId][0]
-   
-        return None
-
-    def getBookByCopyId(self, copyId: int) -> Union[Book, None]:
-        for book in self._books.keys():
-            if book.getCopyId() == copyId:
-                return book
-        return None
-    
-    def getAvailableBooks(self) -> list[Book]:
-        return [book for book in self._books.keys() if self._books[book]]
-    
-    def getUnavailableBooks(self) -> list[Book]:
-        return [book for book in self._books.keys() if not self._books[book]]
-    
-    def getAvailableBookCopies(self, book: Union[Book, None]) -> list[Book]:
-        if book is None:
-            return []
-        return self._copies[book]
-    
-    def getTotalBookCopies(self, book: Union[Book, None]) -> list[Book]:
-        if book is None:
-            return []
-        return [b for b in self._books.keys() if b.getId() == book.getId()]
+    def removeBook(self, book: Union[Book, None], copyId: int) -> bool:
+        libraryBook = self.getBookById(book.getId())
+        if libraryBook is None:
+            return False
+        libraryBook.removeCopyById(copyId)
     
     def reserveBook(self, user: User, bookId: int) -> bool:
-        if bookId not in self._reservedBooks.keys():
+        """
+        Returns the operation's success
+        """
+        book = self.getBookById(bookId)
+        if book is None:
             return False
-
-        if user in self._reservedBooks[bookId]:
+        copy = book.removeAnyCopy()
+        if copy is None:
             return False
-        
-        self._reservedBooks[bookId].append(user)
+        if bookId not in self._reservations.keys():
+            self._reservations[bookId] = []
+        self._reservations[bookId].append(ReservationItem(user, copy))
         return True
     
-    def unreserveBook(self, user: User, book: Book) -> bool:
-        if book.getId() not in self._reservedBooks.keys():
-            return False
+    # def unreserveBook(self, user: User, book: Book) -> bool:
+    #     if book.getId() not in self._reservations.keys():
+    #         return False
         
-        if user not in self._reservedBooks[book.getId()]:
-            return False
+    #     if user not in self._reservations[book.getId()]:
+    #         return False
         
-        self._reservedBooks[book.getId()].remove(user)
+    #     self._reservations[book.getId()].remove(user)
+    #     return True
+
+    def loanBook(self, user: User, bookId: int, loanTimeDays: int) -> bool:
+        """
+        Returns the operation's success
+        """
+        book = self.getBookById(bookId)
+        if book is None:
+            return False
+        copy = book.removeAnyCopy()
+        if copy is None:
+            return False
+        if bookId not in self._loans.keys():
+            self._loans[bookId] = []
+        self._loans[bookId].append(LoanItem(user, copy, date.today(), date.today() + timedelta(days=loanTimeDays)))
         return True
 
-    def getReservationsCount(self, book: Book) -> int:
-        if book.getId() not in self._reservedBooks.keys():
-            return 0
-        return len(self._reservedBooks[book.getId()])
-    
-    def getReservations(self, book: Book) -> list[User]:
-        if book.getId() not in self._reservedBooks.keys():
+    def getReservations(self, bookId: int) -> list[ReservationItem]:
+        if bookId not in self._reservations.keys():
             return []
-        return self._reservedBooks[book.getId()]
+        return self._reservations[bookId]
+
+    def findReservation(self, bookId: int, copyId: int) -> ReservationItem | None:
+        if bookId not in self._reservations.keys():
+            return None
+        for reservation in self._reservations[bookId]:
+            if reservation.getItem().getId() == copyId:
+                return reservation
+        return None
+
+    def findLoan(self, bookId: int, copyId: int) -> LoanItem | None:
+        if bookId not in self._loans.keys():
+            return None
+        for loan in self._loans[bookId]:
+            if loan.getCopy().getItem().getId() == copyId:
+                return loan
+        return None
     
-    def getCopyInfo(self, copyId: int) -> str:
-        book = self.getBookByCopyId(copyId)
+    def getItemInfo(self, bookId: int, copyId: int) -> str:
+        book = self.getBookById(bookId)
         if book is None:
             return f"Copy {copyId} not found."
-        if self._books[book]:
-            return f"   - Status: Disponível."
+
+        copy = book.findCopyById(copyId)
+        reservation = self.findReservation(bookId, copyId)
+        loan = self.findLoan(bookId, copyId)
+
+        copyInfo = f"Exemplar: {copyId}"
+
+        if copy:
+            statusInfo = "   - Status: Disponível."
+        if copy is None and reservation:
+            statusInfo = (
+                f""""
+                - Status: Reservado.
+                Informações da reserva:
+                - Usuário: {reservation.getUser().name}
+                """
+            )
+        elif copy is None and loan:
+            statusInfo = ( 
+                f""""
+                - Status: Emprestado.
+                Informações do empréstimo:	
+                - Usuário: {loan.getUser().name}
+                - Data de empréstimo: {loan.getLoanDate()}
+                - Data prevista de devolução: {loan.getDevolutionDate()}
+                """   
+            )
         else:
-            return f""""
-                    - Status: Indisponível.
-                    Informações do empréstimo:	
-                    - Usuário: {"Jonh Doe"}
-                    - Data de empréstimo: {"01/01/2021"}
-                    - Data prevista de devolução: {"01/02/2021"}
-                    """   
+            statusInfo = "   - Status: Indisponível."
+        return "\n".join([copyInfo, statusInfo])
     
