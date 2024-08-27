@@ -1,11 +1,11 @@
 from datetime import datetime
 
 class Book:
-    def __init__(self, book_id: int, example_id: int,
+    def __init__(self, bookId: int, exampleId: int,
                  title: str, publisher: str, authors: list[str],
                   edition: str, year: datetime) -> None:
-        self._book_id: int = book_id
-        self._example_id: int = example_id
+        self._bookId: int = bookId
+        self._exampleId: int = exampleId
         self._title: str = title
         self._publisher: str = publisher
         self._authors: list[str] = authors
@@ -13,10 +13,10 @@ class Book:
         self._year: datetime = year
     
     def getBookId(self) -> int:
-        return self._book_id
+        return self._bookId
     
     def getExampleId(self) -> int:
-        return self._example_id
+        return self._exampleId
     
     def getTitle(self) -> str:
         return self._title
@@ -35,8 +35,8 @@ class Book:
     
     def __str__(self) -> str:
         return f"""
-            Book ID: {self._book_id}
-            Example ID: {self._example_id}
+            Book ID: {self._bookId}
+            Example ID: {self._exampleId}
             Title: {self._title}
             Publisher: {self._publisher}
             Authors: {self._authors}
