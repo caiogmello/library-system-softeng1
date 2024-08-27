@@ -12,17 +12,33 @@ class User:
     maxLoanTimeDays: int
     maxOpenLoanOperations: int
     maxReservedBooks: Final[int] = 3
-    reservedBooks: int
     loanOperation: Loan
     reserveOperation: Reservation = Reservation()
     devolutionOperation: Devolution = Devolution()
-    loanedBooks: list[Book]
-    reservedBooks: list[Book]
+    loanedBooks: list[Book] = []
+    reservedBooks: list[Book] = []
+
+    def __init__(
+        self,
+        id: str,
+        name: str
+    ):
+        self.id = id
+        self.name = name
 
     def loanBook(self, book: Book) -> None:
         # might raise OperationException
+        if len(self.loanedBooks) >= self.maxOpenLoanOperations:
+            raise OperationException(
+                self.loanOperation,
+                self,
+                book,
+                f"O usuário já possui o número máximo de empréstimos abertos ({self.maxOpenLoanOperations})",
+            )
         self.loanOperation.exec(book, self.maxLoanTimeDays)
         self.loanedBooks.append(book)
+        if book in self.reservedBooks:
+            self.reservedBooks.remove(book)
 
     def reserveBook(self, book: Book) -> None:
         # might raise OperationException
