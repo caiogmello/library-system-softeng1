@@ -10,13 +10,13 @@ class User:
     id: str
     name: str
     maxLoanTimeDays: int
-    maxOpenLoanOperations: int
+    maxOpenLoanOperations: int | None   # None em caso de não haver limite
     maxReservedBooks: Final[int] = 3
     loanOperation: Loan
-    reserveOperation: Reservation = Reservation()
-    devolutionOperation: Devolution = Devolution()
-    loanedBooks: list[Book] = []
-    reservedBooks: list[Book] = []
+    reserveOperation: Reservation
+    devolutionOperation: Devolution
+    loanedBooks: list[Book]
+    reservedBooks: list[Book]
 
     def __init__(
         self,
@@ -25,10 +25,14 @@ class User:
     ):
         self.id = id
         self.name = name
+        self.reserveOperation = Reservation()
+        self.devolutionOperation = Devolution()
+        self.loanedBooks = []
+        self.reservedBooks = []
 
     def loanBook(self, book: Book) -> None:
         # might raise OperationException
-        if len(self.loanedBooks) >= self.maxOpenLoanOperations:
+        if (self.maxOpenLoanOperations is not None) and (len(self.loanedBooks) >= self.maxOpenLoanOperations):
             raise OperationException(
                 self.loanOperation,
                 self,
