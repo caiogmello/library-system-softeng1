@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
+from Operation.Operation import Operation
 
 from Book.BookItem import BookItem
 
-class Loan(ABC):
+class Loan(ABC, Operation):
     @abstractmethod
     def exec(self, user: "User", bookId: int) -> BookItem:
         """

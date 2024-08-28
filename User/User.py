@@ -4,9 +4,9 @@ from Book.BookItem import BookItem
 from Operation.Loan import Loan
 from Operation.Reservation import Reservation
 from Operation.Devolution import Devolution
-from User.UserState import UserState
-from User.UserNotIndebted import UserNotIndebted
-from User.UserIndebted import UserIndebted
+from User.State.UserState import UserState
+from User.State.UserNotIndebted import UserNotIndebted
+from User.State.UserIndebted import UserIndebted
 
 class User:
     id: str
@@ -28,28 +28,23 @@ class User:
     ):
         self.id = id
         self.name = name
-        self.reserveOperation = Reservation()
-        self.devolutionOperation = Devolution()
         self.loanedBooks = []
         self.reservedBooks = []
         self.userState = UserNotIndebted()
 
     def loanBook(self, bookId: int) -> None:
-        bookcopy = self.userState.loanBook(self, bookId)
-        self.loanedBooks.append(bookcopy)
-        if bookcopy in self.reservedBooks:
-            self.reservedBooks.remove(bookcopy)
+        bookCopy = self.userState.loanBook(self, bookId)
+        self.loanedBooks.append(bookCopy)
+        if bookCopy in self.reservedBooks:
+            self.reservedBooks.remove(bookCopy)
 
     def reserveBook(self, bookId: int) -> None:
-        # might raise OperationException
-        # TODO reservation operation
-        self.reservedBooks.append(self, bookId)
+        bookCopy = Reservation().exec(self, bookId)
+        self.reservedBooks.append(self, bookCopy)
     
     def returnBook(self, bookId: int) -> None:
-        # might raise OperationException
-        # TODO devolution operation
-        bookcopy = self.devolutionOperation.exec(self, bookId)
-        self.loanedBooks.remove(bookcopy)
+        bookCopy = Devolution().exec(self, bookId)
+        self.loanedBooks.remove(bookCopy)
 
     def makeIndebted(self) -> None:
         self.userState = UserIndebted()

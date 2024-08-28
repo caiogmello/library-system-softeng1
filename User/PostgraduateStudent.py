@@ -1,7 +1,7 @@
 from User.User import User
-from Book.Book import Book
 from Operation.Loan.StudentLoan import StudentLoan
-from Operation.Exception import OperationException
+from Operation.Reservation import Reservation
+from Operation.Devolution import Devolution
 
 
 class PostgraduateStudent(User):
@@ -11,41 +11,16 @@ class PostgraduateStudent(User):
         self.maxOpenLoanOperations = 4
         self.loanOperation = StudentLoan()
 
-    def loanBook(self, book: Book) -> None:
-        # might raise OperationException
-        if (self.maxOpenLoanOperations is not None) and (len(self.loanedBooks) >= self.maxOpenLoanOperations):
-            raise OperationException(
-                self.loanOperation,
-                self,
-                book,
-                f"O usuário já possui o número máximo de empréstimos abertos ({self.maxOpenLoanOperations})",
-            )
-        self.loanOperation.exec(book, self.maxLoanTimeDays)
-        self.loanedBooks.append(book)
-        if book in self.reservedBooks:
-            self.reservedBooks.remove(book)
+    def loanBook(self, bookId: int) -> None:
+        bookCopy = self.userState.loanBook(self, bookId)
+        self.loanedBooks.append(bookCopy)
+        if bookCopy in self.reservedBooks:
+            self.reservedBooks.remove(bookCopy)
 
-
-    def reserveBook(self, book: Book) -> None:
-        # might raise OperationException
-        if len(self.reservedBooks) >= self.maxReservedBooks:
-            raise OperationException(
-                self.reserveOperation,
-                self,
-                book,
-                f"O usuário já reservou o número máximo de livros ({self.maxReservedBooks})",
-            )
-        self.reservedBooks.append(book)
-        
-
-    def returnBook(self, book: Book) -> None:
-        # might raise OperationException
-        if book not in self.loanedBooks:
-            raise OperationException(
-                self.devolutionOperation,
-                self,
-                book,
-                "O livro não foi emprestado para o usuário",
-            )
-        self.devolutionOperation.exec(book)
-        self.loanedBooks.remove(book)
+    def reserveBook(self, bookId: int) -> None:
+        bookCopy = Reservation().exec(self, bookId)
+        self.reservedBooks.append(self, bookCopy)
+    
+    def returnBook(self, bookId: int) -> None:
+        bookCopy = Devolution().exec(self, bookId)
+        self.loanedBooks.remove(bookCopy)
