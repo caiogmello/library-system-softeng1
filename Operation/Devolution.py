@@ -4,7 +4,6 @@ from Book.BookItem import BookItem
 import Library.Library as lib
 
 class Devolution(Operation):
-    
     @staticmethod
     def exec(user: "User", bookId:int) -> BookItem:
         library = lib.Library.getLibrary()

@@ -44,13 +44,19 @@ class User:
     
     def returnBook(self, bookId: int) -> None:
         bookCopy = Devolution().exec(self, bookId)
-        self.loanedBooks.remove(bookCopy)
+        self.removeLoan(bookId)
 
     def makeIndebted(self) -> None:
         self.userState = UserIndebted()
 
     def makeNotIndebted(self) -> None:
         self.userState = UserNotIndebted()
+
+    def removeLoan(self, bookId: int) -> None:
+        for book in self.loanedBooks:
+            if book.getBookId() == bookId:
+                self.loanedBooks.remove(book)
+                break
 
     def hasReservation(self, bookId: int) -> bool:
         hasReserved = False

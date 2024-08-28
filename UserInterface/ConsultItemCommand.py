@@ -24,6 +24,6 @@ class ConsultItemCommand(LibraryCommand):
             Usuários com reserva: {users}
             """)
         for cop in copies:
-            print(library.getItemInfo(bookId, cop.getId()))
+            print(library.getBookInfo(bookId, cop.getId()))
 
         return super().exec()

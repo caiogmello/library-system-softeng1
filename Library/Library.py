@@ -118,7 +118,7 @@ class Library:
                 return loan
         return None
     
-    def getItemInfo(self, bookId: int, copyId: int) -> str:
+    def getBookInfo(self, bookId: int, copyId) -> str:
         book = self.getBookById(bookId)
         if book is None:
             return f"Copy {copyId} not found."
@@ -129,24 +129,18 @@ class Library:
 
         copyInfo = f"Exemplar: {copyId}"
 
+
         if copy:
-            statusInfo = "   - Status: Disponível."
-        if copy is None and reservation:
-            statusInfo = (
-                f""""
-                - Status: Reservado.
-                Informações da reserva:
-                - Usuário: {reservation.getUser().name}
-                """
-            )
-        elif copy is None and loan:
+            statusInfo = "   - Status: Disponível." 
+
+        if self.findLoan(bookId, copyId):
             statusInfo = ( 
                 f""""
                 - Status: Emprestado.
-                Informações do empréstimo:	
-                - Usuário: {loan.getUser().name}
-                - Data de empréstimo: {loan.getLoanDate()}
-                - Data prevista de devolução: {loan.getDevolutionDate()}
+                    Informações do empréstimo:	
+                    - Usuário: {loan.getUser().name}
+                    - Data de empréstimo: {loan.getLoanDate()}
+                    - Data prevista de devolução: {loan.getDevolutionDate()}
                 """   
             )
 
@@ -175,4 +169,6 @@ class Library:
         if loan is None:
             return False
         self._loans[bookId].remove(loan)
+
+        self.addBook(book, loan.getItem().getId())
         return True
