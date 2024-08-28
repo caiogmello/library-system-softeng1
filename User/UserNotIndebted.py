@@ -6,4 +6,4 @@ class UserNotIndebted(UserState):
         Try to loan a book from the library.
         Print error message in case of failure.
         """
-        self.user.loanOperation.exec(user, bookId)
+        user.loanOperation.exec(user, bookId)

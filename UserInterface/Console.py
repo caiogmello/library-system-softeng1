@@ -42,4 +42,4 @@ class Console:
             if command not in self.commands:
                 print(f"Comando inválido: esperado um dentre {','.join(self.commands.keys())}")
             else:
-                self.commands[command].exec(*options[1:], self._library)
+                self.commands[command].exec(*options[1:])

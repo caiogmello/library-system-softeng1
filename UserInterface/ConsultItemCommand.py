@@ -3,7 +3,8 @@ from Library.Library import Library
 from Book.Book import Book
 
 class ConsultItemCommand(LibraryCommand):
-    def exec(self, bookId: int, library: Library) -> None:
+    def exec(self, bookId: int) -> None:
+        library = Library.getLibrary()
         # TODO implement this
         book = library.getBookById(bookId)
 
