@@ -85,7 +85,6 @@ class Book(Subject):
     def __str__(self) -> str:
         return f"""
             Book ID: {self._id}
-            Copy ID: {self._copyId}
             Title: {self._title}
             Publisher: {self._publisher}
             Authors: {self._authors}
