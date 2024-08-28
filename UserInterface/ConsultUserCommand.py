@@ -2,17 +2,20 @@ from UserInterface.LibraryCommand import LibraryCommand
 import Library.Library as lib
 
 class ConsultUserCommand(LibraryCommand):
-    def exec(self, userId: int, bookId: int) -> None:
+    def exec(self, userId: int) -> None:
         library = lib.Library.getLibrary()
         user = library.getUserById(userId)
-        book = library.getBookById(bookId)  
 
         if user is None:
             print(f"Usuário com ID {userId} não encontrado.")
             return
-        
-        if book is None:
-            print(f"Livro com ID {bookId} não encontrado.")
-            return
 
-        return super().exec()
+        loans = library.allLoansPerUser(user)
+        reservations = library.allReservationsPerUser(user)
+        loanInfo = f"Empréstimos:" + "\n".join(
+            [f"  - {loan.getItem().getTitle()} - {loan.getItem().getId()}" for loan in loans]
+        )
+        reservationInfo = f"Reservas:" + "\n".join(
+            [f"  - {reservation.getItem().getTitle()} - {reservation.getItem().getId()}" for reservation in reservations]
+        )
+        print(f"Usuário: {user.name}\n{loanInfo}\n{reservationInfo}")
