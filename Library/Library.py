@@ -17,6 +17,7 @@ class Library:
     _historicLoans: dict[int, list[ReservationItem]] = {} # bookId -> reservations
     _reservations: dict[int, list[ReservationItem]] = {} # bookId -> reservations
     _loans: dict[int, list[LoanItem]] = {} # bookId -> loans
+    _users: list[user.User] = []    
 
     @staticmethod
     def getLibrary() -> "Library":
@@ -60,8 +61,19 @@ class Library:
         copy = book.reserveAnyCopy()
         if bookId not in self._reservations.keys():
             self._reservations[bookId] = []
+
+        if self.isReservedByUser(bookId, user):
+            raise Exception(f"Usuário {user.name} já possui uma reserva para o livro ID={book.getId()}.")	
         self._reservations[bookId].append(ReservationItem(user, copy))
         return copy
+    
+    def isReservedByUser(self, bookId: int, user: user.User) -> bool:
+        if bookId not in self._reservations.keys():
+            return False
+        for reservation in self._reservations[bookId]:
+            if reservation.getUser() == user:
+                return True
+        return False
     
     # def unreserveBook(self, user: User, book: Book) -> bool:
     #     if book.getId() not in self._reservations.keys():
@@ -138,3 +150,14 @@ class Library:
 
         return "\n".join([copyInfo, statusInfo])
     
+    def addUser(self, user: user.User) -> bool:
+        if user not in self._users:
+            self._users.append(user)
+            return True
+        return False
+    
+    def getUserById(self, userId: int) -> user.User | None:
+        for user in self._users:
+            if user.id == userId:
+                return user
+        return None

@@ -11,10 +11,8 @@ if __name__ == "__main__":
 
     for book in books:
         lib.addBookByDict(book)
-
-    lib.reserveBook(users[0], "100")
-    lib.reserveBook(users[1], "100")
-    # lib.reserveBook(users[2], "102")
+    for user in users:
+        lib.addUser(user)
 
     console = Console.getConsole()
     console.service()

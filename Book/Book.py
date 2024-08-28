@@ -66,9 +66,15 @@ class Book(Subject):
             return self._copies.pop()
         else:
             return None
+        
+    def getAnyCopy(self) -> BookItem:
+        if len(self._copies) > 0:
+            return self._copies[-1]
+        else:
+            return None
     
     def reserveAnyCopy(self) -> BookItem:
-        copy = self.removeAnyCopy()
+        copy = self.getAnyCopy()
         if copy is None:
             raise Exception(f"Nenhuma cópia de livro ID={self._id} disponível para reserva")
         self._reserved.append(copy)

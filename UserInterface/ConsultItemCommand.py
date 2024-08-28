@@ -7,7 +7,7 @@ class ConsultItemCommand(LibraryCommand):
         book = library.getBookById(bookId)
 
         if book is None:
-            print("Nenhum livro encontrado com ID " + str(bookId))
+            print(f"Livro com ID {bookId} não encontrado.")
             return
         
         title = book.getTitle()

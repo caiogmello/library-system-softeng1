@@ -10,7 +10,7 @@ class ReservationItem:
         self._reservedItem = reservedItem
 
     def getItem(self) -> BookItem:
-        return self._loanedItem
+        return self._reservedItem
 
     def getUser(self) -> User:
         return self._user
