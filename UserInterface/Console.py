@@ -9,11 +9,9 @@ from UserInterface.ExitCommand import ExitCommand
 from UserInterface.LoanItemCommand import LoanItemCommand
 from UserInterface.ReserveItemCommand import ReserveItemCommand
 from UserInterface.ReturnItemCommand import ReturnItemCommand
-from Library.Library import Library
 class Console:
     _instance: Union["Console", None] = None
     commands: dict[str, LibraryCommand] = {}
-    _library: Union['Library', None] = None 
 
     @staticmethod
     def getConsole() -> "Console":
@@ -32,7 +30,6 @@ class Console:
         self.commands["sai"] = ExitCommand()
 
     def __init__(self):
-        self._library = Library.getLibrary()
         self.initCommands()
 
     def service(self) -> None:

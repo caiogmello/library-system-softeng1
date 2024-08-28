@@ -1,7 +1,7 @@
 from typing import Union
 from datetime import date, timedelta
 
-from User.User import User
+import User.User as user
 from Book.Book import Book
 from Book.BookItem import BookItem
 from Operation.Operation import Operation
@@ -45,7 +45,7 @@ class Library:
 
     def addBookByDict(self, bookDict: dict) -> None:
         book = Factory.createBookFromDict(bookDict)
-        self.addBook(book)
+        self.addBook(book, bookDict["copyId"])
     
     def removeBook(self, book: Union[Book, None], copyId: int) -> bool:
         libraryBook = self.getBookById(book.getId())
@@ -53,7 +53,7 @@ class Library:
             return False
         libraryBook.removeCopyById(copyId)
     
-    def reserveBook(self, user: User, bookId: int) -> BookItem:
+    def reserveBook(self, user: user.User, bookId: int) -> BookItem:
         book = self.getBookById(bookId)
         if book is None:
             raise Exception(f"Livro ID={bookId} não encontrado.")
@@ -73,7 +73,7 @@ class Library:
     #     self._reservations[book.getId()].remove(user)
     #     return True
 
-    def loanBook(self, user: User, bookId: int, loanTimeDays: int) -> BookItem:
+    def loanBook(self, user: user.User, bookId: int, loanTimeDays: int) -> BookItem:
         book = self.getBookById(bookId)
         if book is None:
             raise Exception(f"Livro ID={bookId} não encontrado.")

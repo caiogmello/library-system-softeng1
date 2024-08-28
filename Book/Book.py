@@ -12,8 +12,8 @@ class Book(Subject):
     _reserved: list[BookItem]
     _loaned: list[BookItem]
     
-    def __init__(self, bookId: str, title: str, publisher: str, authors: list[str],
-                  edition: str, year: str) -> None:
+    def __init__(self, bookId: str, title: str, publisher: str,
+                  authors: list[str], edition: str, year: str) -> None:
         
         self._id = bookId
         self._title = title
@@ -22,6 +22,9 @@ class Book(Subject):
         self._edition = edition
         self._year = year
         self._copies = []
+        self._reserved = []
+        self._loaned = []
+        self.observers = []
     
     def getId(self) -> str:
         return self._id
@@ -45,7 +48,7 @@ class Book(Subject):
         return self._copies
 
     def addCopy(self, copyId: int) -> None:
-        self._copies.append(BookItem(copyId))
+        self._copies.append(BookItem(copyId, self._id))
 
     def findCopyById(self, copyId: int) -> BookItem | None:
         for copy in self._copies:

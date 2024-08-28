@@ -1,7 +1,5 @@
 from UserInterface.Console import Console
 from Library.Library import Library
-from User.User import User
-from User.Professor import Professor
 from UserInterface.Data import getBooks, getUsers
 
 
@@ -16,7 +14,7 @@ if __name__ == "__main__":
 
     lib.reserveBook(users[0], "100")
     lib.reserveBook(users[1], "100")
-    lib.reserveBook(users[2], "102")
+    # lib.reserveBook(users[2], "102")
 
     console = Console.getConsole()
     console.service()

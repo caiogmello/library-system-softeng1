@@ -1,19 +1,18 @@
 from Book.Book import Book
-from datetime import datetime
 
 class Factory:
 
     @staticmethod
-    def createBook(bookId: int, exampleId: int,
+    def createBook(bookId: int, 
                    title: str, publisher: str, authors: list[str],
-                   edition: str, year: datetime) -> Book:
-        return Book(bookId, exampleId, title, publisher, authors, edition, year)
+                   edition: str, year: str) -> Book:
+        
+        return Book(bookId, title, publisher, authors, edition, year)
     
     @staticmethod
     def createBookFromDict(bookDict: dict) -> Book:
         return Factory.createBook(
             bookDict["id"],
-            bookDict["copyId"],
             bookDict["title"],
             bookDict["publisher"],
             bookDict["authors"],

@@ -3,7 +3,7 @@ from Operation.Operation import Operation
 
 from Book.BookItem import BookItem
 
-class Loan(ABC, Operation):
+class Loan(Operation, ABC):
     @abstractmethod
     def exec(self, user: "User", bookId: int) -> BookItem:
         """

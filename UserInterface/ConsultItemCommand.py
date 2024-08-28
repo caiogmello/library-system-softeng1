@@ -1,10 +1,9 @@
 from UserInterface.LibraryCommand import LibraryCommand
-from Library.Library import Library 
-from Book.Book import Book
+import Library.Library as lib
 
 class ConsultItemCommand(LibraryCommand):
     def exec(self, bookId: int) -> None:
-        library = Library.getLibrary()
+        library = lib.Library.getLibrary()
         # TODO implement this
         book = library.getBookById(bookId)
 
