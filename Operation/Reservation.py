@@ -16,7 +16,5 @@ class Reservation(Operation):
                 bookId=bookId,
                 reason=f"O usuário já reservou o número máximo de livros ({user.maxReservedBooks})",
             )
-        
-        # TODO: mensagem de sucesso	
-        
+                
         return library.reserveBook(user, bookId)

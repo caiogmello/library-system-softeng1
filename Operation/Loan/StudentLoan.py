@@ -37,7 +37,7 @@ class StudentLoan(Loan):
                 bookId=bookId,
                 reason=f"O usuário já possui o número máximo de empréstimos abertos ({user.maxOpenLoanOperations})",
             )
-
+         
         # iv-v
         if numReservations >= numAvailable and (not user.hasReservation(bookId)):
             raise OperationException(
@@ -47,6 +47,7 @@ class StudentLoan(Loan):
                 reason="Não há cópias disponíveis para empréstimo, e não há reserva do usuário",
             )
 
+        # vi
         if user.hasLoan(bookId):
             raise OperationException(
                 operationType=StudentLoan,
@@ -55,4 +56,4 @@ class StudentLoan(Loan):
                 reason="O usuário já possui um empréstimo do livro",
             )
 
-        library.loanBook(user=user, bookId=bookId)
+        return library.loanBook(user=user, bookId=bookId)

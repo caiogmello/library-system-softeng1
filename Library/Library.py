@@ -75,15 +75,14 @@ class Library:
                 return True
         return False
     
-    # def unreserveBook(self, user: User, book: Book) -> bool:
-    #     if book.getId() not in self._reservations.keys():
-    #         return False
-        
-    #     if user not in self._reservations[book.getId()]:
-    #         return False
-        
-    #     self._reservations[book.getId()].remove(user)
-    #     return True
+    def unreserveBook(self, user: user.User, bookId: int) -> bool:
+        if bookId not in self._reservations.keys():
+            return False
+        for reservation in self._reservations[bookId]:
+            if reservation.getUser() == user:
+                self._reservations[bookId].remove(reservation)
+                return True
+        return False
 
     def loanBook(self, user: user.User, bookId: int) -> BookItem:
         book = self.getBookById(bookId)
@@ -92,7 +91,10 @@ class Library:
         copy = book.loanAnyCopy()
         if bookId not in self._loans.keys():
             self._loans[bookId] = []
-        self._loans[bookId].append(LoanItem(user, copy, date.today(), date.today() + timedelta(days=user.maxLoanTimeDays)))
+        self.unreserveBook(user, bookId)
+        self._loans[bookId].append(LoanItem(user, copy,
+                                             date.today(),
+                                               date.today() + timedelta(days=user.maxLoanTimeDays)))
         return copy
 
     def getReservations(self, bookId: int) -> list[ReservationItem]:

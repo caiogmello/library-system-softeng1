@@ -8,7 +8,7 @@ class ProfessorLoan(Loan):
         library = Library.getLibrary()
         numAvailable = len(library.getBookById(bookId).getCopies())
 
-        # i
+        # i 
         if numAvailable == 0:
             raise OperationException(
                 operationType=ProfessorLoan,
@@ -17,4 +17,4 @@ class ProfessorLoan(Loan):
                 reason="Não há cópias disponíveis para empréstimo",
             )
         
-        return library.loanBook(user=user, bookId=bookId, loanTimeDays=user.maxLoanTimeDays)
+        return library.loanBook(user, bookId)

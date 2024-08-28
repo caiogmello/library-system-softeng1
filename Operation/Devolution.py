@@ -6,7 +6,7 @@ import Library.Library as lib
 class Devolution(Operation):
     
     @staticmethod
-    def exec(user, bookId:int) -> BookItem:
+    def exec(user: "User", bookId:int) -> BookItem:
         library = lib.Library.getLibrary()
         book = library.getBookById(bookId)
 
@@ -18,6 +18,4 @@ class Devolution(Operation):
                 reason="O usuário não possui um empréstimo em aberto do livro",
             )
         
-        # TODO: mensagem de sucesso
-
         return library.returnBook(user, bookId)
