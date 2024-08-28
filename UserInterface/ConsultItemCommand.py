@@ -4,7 +4,6 @@ import Library.Library as lib
 class ConsultItemCommand(LibraryCommand):
     def exec(self, bookId: int) -> None:
         library = lib.Library.getLibrary()
-        # TODO implement this
         book = library.getBookById(bookId)
 
         if book is None:

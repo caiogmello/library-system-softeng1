@@ -135,7 +135,6 @@ class Library:
                 - Data prevista de devolução: {loan.getDevolutionDate()}
                 """   
             )
-        else:
-            statusInfo = "   - Status: Indisponível."
+
         return "\n".join([copyInfo, statusInfo])
     
