@@ -1,5 +1,4 @@
 from User.UserState import UserState
-from User.UserNotIndebted import UserNotIndebted
 from Operation.Exception import OperationException
 
 class UserIndebted(UserState):

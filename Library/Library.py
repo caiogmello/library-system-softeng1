@@ -3,6 +3,7 @@ from datetime import date, timedelta
 
 from User.User import User
 from Book.Book import Book
+from Book.BookItem import BookItem
 from Operation.Operation import Operation
 from UserInterface.Factory import Factory
 from Library.LoanItem import LoanItem
@@ -12,6 +13,8 @@ class Library:
     _instance: Union["Library", None] = None
     _books: list[Book] = []
     _operations: list[Operation] = [] # operations performed in the library
+    _historicReservations: dict[int, list[ReservationItem]] = {} # bookId -> reservations
+    _historicLoans: dict[int, list[ReservationItem]] = {} # bookId -> reservations
     _reservations: dict[int, list[ReservationItem]] = {} # bookId -> reservations
     _loans: dict[int, list[LoanItem]] = {} # bookId -> loans
 
@@ -50,7 +53,7 @@ class Library:
             return False
         libraryBook.removeCopyById(copyId)
     
-    def reserveBook(self, user: User, bookId: int) -> None:
+    def reserveBook(self, user: User, bookId: int) -> BookItem:
         book = self.getBookById(bookId)
         if book is None:
             raise Exception(f"Livro ID={bookId} não encontrado.")
@@ -58,6 +61,7 @@ class Library:
         if bookId not in self._reservations.keys():
             self._reservations[bookId] = []
         self._reservations[bookId].append(ReservationItem(user, copy))
+        return copy
     
     # def unreserveBook(self, user: User, book: Book) -> bool:
     #     if book.getId() not in self._reservations.keys():
@@ -69,7 +73,7 @@ class Library:
     #     self._reservations[book.getId()].remove(user)
     #     return True
 
-    def loanBook(self, user: User, bookId: int, loanTimeDays: int):
+    def loanBook(self, user: User, bookId: int, loanTimeDays: int) -> BookItem:
         book = self.getBookById(bookId)
         if book is None:
             raise Exception(f"Livro ID={bookId} não encontrado.")
@@ -77,7 +81,7 @@ class Library:
         if bookId not in self._loans.keys():
             self._loans[bookId] = []
         self._loans[bookId].append(LoanItem(user, copy, date.today(), date.today() + timedelta(days=loanTimeDays)))
-        return True
+        return copy
 
     def getReservations(self, bookId: int) -> list[ReservationItem]:
         if bookId not in self._reservations.keys():

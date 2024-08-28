@@ -4,7 +4,6 @@ from Book.BookItem import BookItem
 from Operation.Loan import Loan
 from Operation.Reservation import Reservation
 from Operation.Devolution import Devolution
-from Operation.Exception import OperationException
 from User.UserState import UserState
 from User.UserNotIndebted import UserNotIndebted
 from User.UserIndebted import UserIndebted
@@ -13,7 +12,7 @@ class User:
     id: str
     name: str
     maxLoanTimeDays: int
-    maxOpenLoanOperations: int | None   # None em caso de não haver limite
+    maxOpenLoanOperations: Final[int | None]   # None em caso de não haver limite
     maxReservedBooks: Final[int] = 3
     loanOperation: Loan
     reserveOperation: Reservation
@@ -35,34 +34,22 @@ class User:
         self.reservedBooks = []
         self.userState = UserNotIndebted()
 
-    def loanBook(self, book: Book) -> None:
-        self.userState.loanBook(self, book)
-        self.loanedBooks.append(book)
-        if book in self.reservedBooks:
-            self.reservedBooks.remove(book)
+    def loanBook(self, bookId: int) -> None:
+        bookcopy = self.userState.loanBook(self, bookId)
+        self.loanedBooks.append(bookcopy)
+        if bookcopy in self.reservedBooks:
+            self.reservedBooks.remove(bookcopy)
 
-    def reserveBook(self, book: Book) -> None:
+    def reserveBook(self, bookId: int) -> None:
         # might raise OperationException
-        if len(self.reservedBooks) >= self.maxReservedBooks:
-            raise OperationException(
-                self.reserveOperation,
-                self,
-                book,
-                f"O usuário já reservou o número máximo de livros ({self.maxReservedBooks})",
-            )
-        self.reservedBooks.append(book)
+        # TODO reservation operation
+        self.reservedBooks.append(self, bookId)
     
-    def returnBook(self, book: Book) -> None:
+    def returnBook(self, bookId: int) -> None:
         # might raise OperationException
-        if book not in self.loanedBooks:
-            raise OperationException(
-                self.devolutionOperation,
-                self,
-                book,
-                "O livro não foi emprestado para o usuário",
-            )
-        self.devolutionOperation.exec(book)
-        self.loanedBooks.remove(book)
+        # TODO devolution operation
+        bookcopy = self.devolutionOperation.exec(self, bookId)
+        self.loanedBooks.remove(bookcopy)
 
     def makeIndebted(self) -> None:
         self.userState = UserIndebted()
@@ -81,4 +68,3 @@ class User:
         for loan in self.loanedBooks:
             hasLoaned = hasLoaned or loan.getBookId() == bookId
         return hasLoaned
-

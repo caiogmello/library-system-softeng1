@@ -1,9 +1,10 @@
 from Operation.Loan.Loan import Loan
 from Library.Library import Library
 from Operation.Exception import OperationException
+from Book.BookItem import BookItem
 
 class ProfessorLoan(Loan):
-    def exec(self, user, bookId) -> None:
+    def exec(self, user, bookId) -> BookItem:
         library = Library.getLibrary()
         numAvailable = len(library.getBookById(bookId).getCopies())
 
@@ -16,4 +17,4 @@ class ProfessorLoan(Loan):
                 reason="Não há cópias disponíveis para empréstimo",
             )
         
-        library.loanBook(user=user, bookId=bookId, loanTimeDays=user.maxLoanTimeDays)
+        return library.loanBook(user=user, bookId=bookId, loanTimeDays=user.maxLoanTimeDays)

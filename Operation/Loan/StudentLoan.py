@@ -2,8 +2,10 @@ from Operation.Loan.Loan import Loan
 from Library.Library import Library
 from Operation.Exception import OperationException
 
+from Book.BookItem import BookItem
+
 class StudentLoan(Loan):
-    def exec(self, user, bookId) -> None:
+    def exec(self, user, bookId) -> BookItem:
         # user : User type
         library = Library.getLibrary()
 
