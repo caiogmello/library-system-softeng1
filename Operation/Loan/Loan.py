@@ -1,9 +1,11 @@
 from abc import ABC, abstractmethod
-from Book.Book import Book
 
 class Loan(ABC):
-
     @abstractmethod
-    def exec(self, book:Book, maxLoanTimeDays: int) -> None:
+    def exec(self, user: "User", bookId: int) -> None:
+        """
+        Try to loan a book from the library.
+        Print error message in case of failure.
+        """
         pass
 
