@@ -7,14 +7,14 @@ from Operation.Reservation import Reservation
 from Operation.Devolution import Devolution
 
 class Professor(User, Observer):
-    dupReservationNotificationCnt: int
+    _dupReservationNotificationCnt: int
 
     def __init__(self, id: str, name: str):
         super().__init__(id, name)
         self.maxLoanTimeDays = 7
         self.maxOpenLoanOperations = None
         self.loanOperation = ProfessorLoan()
-        self.dupReservationNotificationCnt = 0
+        self._dupReservationNotificationCnt = 0
 
     def loanBook(self, bookId: int) -> None:
         bookCopy = self.userState.loanBook(self, bookId)
@@ -31,6 +31,8 @@ class Professor(User, Observer):
         self.loanedBooks.remove(bookCopy)
 
     def update(self, observedBook: Book):
-        self.dupReservationNotificationCnt += 1
+        self._dupReservationNotificationCnt += 1
 
+    def getNotificationCount(self) -> int:
+        return self._dupReservationNotificationCnt
     

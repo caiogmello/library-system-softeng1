@@ -19,3 +19,4 @@ class ConsultUserCommand(LibraryCommand):
             [f"  - {reservation.getItem().getTitle()} - {reservation.getItem().getId()}" for reservation in reservations]
         )
         print(f"Usuário: {user.name}\n{loanInfo}\n{reservationInfo}")
+        return super().exec()

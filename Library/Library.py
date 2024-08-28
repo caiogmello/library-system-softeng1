@@ -61,6 +61,8 @@ class Library:
         copy = book.reserveAnyCopy()
         if bookId not in self._reservations.keys():
             self._reservations[bookId] = []
+        if bookId not in self._historicReservations.keys():
+            self._historicReservations[bookId] = []
 
         if self.isReservedByUser(bookId, user):
             raise Exception(f"Usuário {user.name} já possui uma reserva para o livro ID={book.getId()}.")	
@@ -124,6 +126,9 @@ class Library:
         copy = book.loanAnyCopy()
         if bookId not in self._loans.keys():
             self._loans[bookId] = []
+        if bookId not in self._historicLoans.keys():
+            self._historicLoans[bookId] = []
+
         self._loans[bookId].append(LoanItem(user, copy, date.today(), date.today() + timedelta(days=user.maxLoanTimeDays)))
         self._historicLoans[bookId].append(LoanItem(user, copy, date.today(), date.today() + timedelta(days=user.maxLoanTimeDays)))
         return copy
