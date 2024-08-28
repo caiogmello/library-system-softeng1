@@ -13,3 +13,6 @@ class OperationException(Exception):
             f" e livro '{bookId}' pelo seguinte motivo: '{reason}'"
         )
         super().__init__(self.message)
+
+    def __str__(self):
+        return self.message

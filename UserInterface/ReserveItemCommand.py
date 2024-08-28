@@ -15,6 +15,9 @@ class ReserveItemCommand(LibraryCommand):
             print(f"Livro com ID {bookId} não encontrado.")
             return
         
-        user.reserveBook(bookId)
-        print(f"Reserva do livro {book.getTitle()} efetuada com sucesso para o usuário {user.name}.")
+        try:
+            user.reserveBook(bookId)
+            print(f"Reserva do livro {book.getTitle()} efetuada com sucesso para o usuário {user.name}.")
+        except Exception as e:
+            print(f"Erro ao emprestar livro: {e}")
         return super().exec()

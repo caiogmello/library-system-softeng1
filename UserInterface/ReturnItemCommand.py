@@ -15,5 +15,8 @@ class ReturnItemCommand(LibraryCommand):
             print(f"Livro com ID {bookId} não encontrado.")
             return
     
-        user.returnBook(bookId)
+        try:
+            user.returnBook(bookId)
+        except Exception as e:
+            print(f"Erro ao emprestar livro: {e}")
         return super().exec()

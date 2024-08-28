@@ -15,7 +15,10 @@ class LoanItemCommand(LibraryCommand):
             print(f"Livro com ID {bookId} não encontrado.")
             return
         
-        user.loanBook(bookId)
-        print(f"Livro {book.getTitle()} emprestado para {user.name}.")
+        try:
+            user.loanBook(bookId)
+            print(f"Livro {book.getTitle()} emprestado para {user.name}.")
+        except Exception as e:
+            print(f"Erro ao emprestar livro: {e.message}")
         
         return super().exec()

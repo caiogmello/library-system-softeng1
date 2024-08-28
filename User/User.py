@@ -45,7 +45,7 @@ class User:
 
     def reserveBook(self, bookId: int) -> None:
         bookCopy = Reservation().exec(self, bookId)
-        self.reservedBooks.append(self, bookCopy)
+        self.reservedBooks.append(bookCopy)
     
     def returnBook(self, bookId: int) -> None:
         bookCopy = Devolution().exec(self, bookId)
