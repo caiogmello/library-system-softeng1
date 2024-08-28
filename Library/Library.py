@@ -75,15 +75,47 @@ class Library:
                 return True
         return False
     
-    # def unreserveBook(self, user: User, book: Book) -> bool:
-    #     if book.getId() not in self._reservations.keys():
-    #         return False
-        
-    #     if user not in self._reservations[book.getId()]:
-    #         return False
-        
-    #     self._reservations[book.getId()].remove(user)
-    #     return True
+    def unreserveBook(self, user: user.User, bookId: int) -> BookItem:
+        book = self.getBookById(bookId)
+        if book is None:
+            raise Exception(f"Livro ID={bookId} não encontrado.")
+
+        if bookId not in self._reservations.keys():
+            raise Exception(f"Livro ID={bookId} não está reservado por nenhum usuário.")
+
+        reservation = None
+        for registeredReservation in self._reservations[bookId]:
+            if registeredReservation.getUser() == user:
+                reservation = registeredReservation
+                break
+        if reservation is None:
+            raise Exception(f"Livro ID={bookId} não está reservado por {user.name}.")
+
+        copy = reservation.getItem()
+        book.returnReservedCopy(copy)
+        user.returnReservation(bookId)
+        self._reservations[bookId].remove(reservation)
+
+        return copy
+    
+    def returnBook(self, user: user.User, bookId: int) -> None:
+        book = self.getBookById(bookId)
+        if book is None:
+            raise Exception(f"Livro ID={bookId} não encontrado.")
+
+        if bookId not in self._loans:
+            raise Exception(f"Livro ID={bookId} não está emprestado.")
+
+        loan = None
+        for registeredLoan in self._loans[bookId]:
+            if registeredLoan.getUser() == user:
+                loan = registeredLoan
+                break
+        if loan is None:
+            raise Exception(f"Usuário {user.name} não possui empréstimo do livro ID={bookId}.")
+        copy = loan.getItem()
+        book.returnLoanedCopy(copy)
+        self._loans[bookId].remove(loan)
 
     def loanBook(self, user: user.User, bookId: int) -> BookItem:
         book = self.getBookById(bookId)
@@ -161,16 +193,3 @@ class Library:
             if user.id == userId:
                 return user
         return None
-    
-    def returnBook(self, userId: int, bookId: int) -> bool:
-        user = self.getUserById(userId)
-        if user is None:
-            return False
-        book = self.getBookById(bookId)
-        if book is None:
-            return False
-        loan = self.findLoan(bookId, bookId)
-        if loan is None:
-            return False
-        self._loans[bookId].remove(loan)
-        return True

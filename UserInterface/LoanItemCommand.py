@@ -1,5 +1,6 @@
 from UserInterface.LibraryCommand import LibraryCommand
 import Library.Library as lib
+
 class LoanItemCommand(LibraryCommand):
     def exec(self, userId: int, bookId: int) -> None:
         library = lib.Library.getLibrary()
@@ -16,5 +17,5 @@ class LoanItemCommand(LibraryCommand):
         
         user.loanBook(bookId)
         print(f"Livro {book.getTitle()} emprestado para {user.name}.")
-        # TODO implement this
+        
         return super().exec()

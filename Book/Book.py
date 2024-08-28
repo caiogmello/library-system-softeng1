@@ -91,6 +91,14 @@ class Book(Subject):
         self._loaned.append(copy)
         return copy
 
+    def returnReservedCopy(self, copy: BookItem) -> None:
+        self._reserved.remove(copy)
+        self._copies.append(copy)
+
+    def returnLoanedCopy(self, copy: BookItem) -> None:
+        self._loaned.remove(copy)
+        self._copies.append(copy)
+
     def __str__(self) -> str:
         return f"""
             Book ID: {self._id}

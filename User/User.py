@@ -4,6 +4,7 @@ from Book.BookItem import BookItem
 from Operation.Loan import Loan
 from Operation.Reservation import Reservation
 from Operation.Devolution import Devolution
+from Operation.CancelReservation import CancelReservationIfExists
 from User.State.UserState import UserState
 from User.State.UserNotIndebted import UserNotIndebted
 from User.State.UserIndebted import UserIndebted
@@ -33,6 +34,10 @@ class User:
         self.userState = UserNotIndebted()
 
     def loanBook(self, bookId: int) -> None:
+        # remove all reservations of that book
+        while (bookCopy := CancelReservationIfExists().exec(self, bookId)) is not None:
+            self.reservedBooks.remove(bookCopy)
+    
         bookCopy = self.userState.loanBook(self, bookId)
         self.loanedBooks.append(bookCopy)
         if bookCopy in self.reservedBooks:
