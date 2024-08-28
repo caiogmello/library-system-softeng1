@@ -55,4 +55,4 @@ class StudentLoan(Loan):
                 reason="O usuário já possui um empréstimo do livro",
             )
 
-        library.loanBook(user=user, bookId=bookId, loanTimeDays=user.maxLoanTimeDays)
+        library.loanBook(user=user, bookId=bookId)

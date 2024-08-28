@@ -20,4 +20,4 @@ class Devolution(Operation):
         
         # TODO: mensagem de sucesso
 
-        return library.devolutionBook(user, bookId)
+        return library.returnBook(user, bookId)

@@ -85,14 +85,14 @@ class Library:
     #     self._reservations[book.getId()].remove(user)
     #     return True
 
-    def loanBook(self, user: user.User, bookId: int, loanTimeDays: int) -> BookItem:
+    def loanBook(self, user: user.User, bookId: int) -> BookItem:
         book = self.getBookById(bookId)
         if book is None:
             raise Exception(f"Livro ID={bookId} não encontrado.")
         copy = book.loanAnyCopy()
         if bookId not in self._loans.keys():
             self._loans[bookId] = []
-        self._loans[bookId].append(LoanItem(user, copy, date.today(), date.today() + timedelta(days=loanTimeDays)))
+        self._loans[bookId].append(LoanItem(user, copy, date.today(), date.today() + timedelta(days=user.maxLoanTimeDays)))
         return copy
 
     def getReservations(self, bookId: int) -> list[ReservationItem]:
@@ -112,7 +112,7 @@ class Library:
         if bookId not in self._loans.keys():
             return None
         for loan in self._loans[bookId]:
-            if loan.getCopy().getItem().getId() == copyId:
+            if loan.getItem().getId() == copyId:
                 return loan
         return None
     
@@ -161,3 +161,16 @@ class Library:
             if user.id == userId:
                 return user
         return None
+    
+    def returnBook(self, userId: int, bookId: int) -> bool:
+        user = self.getUserById(userId)
+        if user is None:
+            return False
+        book = self.getBookById(bookId)
+        if book is None:
+            return False
+        loan = self.findLoan(bookId, bookId)
+        if loan is None:
+            return False
+        self._loans[bookId].remove(loan)
+        return True
