@@ -7,7 +7,6 @@ class Devolution(Operation):
     @staticmethod
     def exec(user: "User", bookId:int) -> BookItem:
         library = lib.Library.getLibrary()
-        book = library.getBookById(bookId)
 
         if not user.hasLoan(bookId):
             raise OperationException(

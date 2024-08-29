@@ -163,20 +163,19 @@ class Library:
         reservation = self.findReservation(bookId, copyId)
         loan = self.findLoan(bookId, copyId)
 
-        copyInfo = f"Exemplar: {copyId}"
+        copyInfo = f"\tExemplar: {copyId}"
 
 
         if copy:
-            statusInfo = "   - Status: Disponível." 
+            statusInfo = "\t- Status: Disponível.\n" 
 
         if self.findLoan(bookId, copyId):
             statusInfo = ( 
-                f""""
-                - Status: Emprestado.
-                    Informações do empréstimo:	
-                    - Usuário: {loan.getUser().name}
-                    - Data de empréstimo: {loan.getLoanDate()}
-                    - Data prevista de devolução: {loan.getDevolutionDate()}
+                f"""\t- Status: Emprestado.
+\t\tInformações do empréstimo:	
+\t\t- Usuário: {loan.getUser().name}
+\t\t- Data de empréstimo: {loan.getLoanDate()}
+\t\t- Data prevista de devolução: {loan.getDevolutionDate()}
                 """   
             )
 
@@ -193,21 +192,6 @@ class Library:
             if user.id == userId:
                 return user
         return None
-    
-    def returnBook(self, userId: int, bookId: int) -> bool:
-        user = self.getUserById(userId)
-        if user is None:
-            return False
-        book = self.getBookById(bookId)
-        if book is None:
-            return False
-        loan = self.findLoan(bookId, bookId)
-        if loan is None:
-            return False
-        self._loans[bookId].remove(loan)
-
-        self.addBook(book, loan.getItem().getId())
-        return True
 
     def allLoansPerUser(self, user: user.User) -> list[LoanItem]:
         loans = []
