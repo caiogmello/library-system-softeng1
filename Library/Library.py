@@ -14,7 +14,7 @@ class Library:
     _books: list[Book] = []
     _operations: list[Operation] = [] # operations performed in the library
     _historicReservations: dict[int, list[ReservationItem]] = {} # bookId -> reservations
-    _historicLoans: dict[int, list[ReservationItem]] = {} # bookId -> reservations
+    _historicLoans: dict[int, list[LoanItem]] = {} # bookId -> loans
     _reservations: dict[int, list[ReservationItem]] = {} # bookId -> reservations
     _loans: dict[int, list[LoanItem]] = {} # bookId -> loans
     _users: list[user.User] = []    
@@ -66,8 +66,8 @@ class Library:
 
         if self.isReservedByUser(bookId, user):
             raise Exception(f"Usuário {user.name} já possui uma reserva para o livro ID={book.getId()}.")	
-        self._reservations[bookId].append(ReservationItem(user, copy))
-        self._historicReservations[bookId].append(ReservationItem(user, copy))
+        self._reservations[bookId].append(ReservationItem(user, copy, date.today()))
+        self._historicReservations[bookId].append(ReservationItem(user, copy, date.today()))
         return copy
     
     def isReservedByUser(self, bookId: int, user: user.User) -> bool:
@@ -116,6 +116,8 @@ class Library:
         if loan is None:
             raise Exception(f"Usuário {user.name} não possui empréstimo do livro ID={bookId}.")
         copy = loan.getItem()
+        print(f"Devolvendo exemplar {copy.getId()} do livro {book.getTitle()}.")
+        loan.closeLoan()
         book.returnLoanedCopy(copy)
         self._loans[bookId].remove(loan)
 
@@ -129,8 +131,9 @@ class Library:
         if bookId not in self._historicLoans.keys():
             self._historicLoans[bookId] = []
 
-        self._loans[bookId].append(LoanItem(user, copy, date.today(), date.today() + timedelta(days=user.maxLoanTimeDays)))
-        self._historicLoans[bookId].append(LoanItem(user, copy, date.today(), date.today() + timedelta(days=user.maxLoanTimeDays)))
+        loanItem = LoanItem(user, copy, date.today(), date.today() + timedelta(days=user.maxLoanTimeDays))
+        self._loans[bookId].append(loanItem)
+        self._historicLoans[bookId].append(loanItem)
         return copy
 
     def getReservations(self, bookId: int) -> list[ReservationItem]:
@@ -195,14 +198,16 @@ class Library:
 
     def allLoansPerUser(self, user: user.User) -> list[LoanItem]:
         loans = []
-        for loan in self._historicLoans:
-            if loan.getUser() == user:
-                loans.append(loan)
+        for book in self._historicLoans:
+            for loan in self._historicLoans[book]:
+                if loan.getUser() == user:
+                    loans.append(loan)
         return loans
 
     def allReservationsPerUser(self, user: user.User) -> list[ReservationItem]:
         reservations = []
-        for reservation in self._historicReservations:
-            if reservation.getUser() == user:
-                reservations.append(reservation)
+        for book in self._historicReservations:
+            for reservation in self._historicReservations[book]:
+                if reservation.getUser() == user:
+                    reservations.append(reservation)
         return reservations
