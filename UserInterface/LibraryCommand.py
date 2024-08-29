@@ -2,7 +2,7 @@ from abc import abstractmethod, ABC
 
 class LibraryCommand(ABC):
     @abstractmethod
-    def exec(self) -> None:
+    def exec(self, *args) -> None:
         """
         Execute command issued.
         """

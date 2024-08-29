@@ -1,6 +1,14 @@
-from Loan.LoanType import LoanType
+from abc import ABC, abstractmethod
+from Operation.Operation import Operation
 
-class Loan:
-    def __init__(self, loan_type: LoanType) -> None:
-        self._loan_type: LoanType = loan_type
+from Book.BookItem import BookItem
+
+class Loan(Operation, ABC):
+    @abstractmethod
+    def exec(self, user: "User", bookId: int) -> BookItem:
+        """
+        Try to loan a book from the library.
+        Print error message in case of failure.
+        """
+        pass
 

@@ -7,7 +7,7 @@ class Subject:
         self.observers: list[Observer] = []
 
     def registerObserver(self, observer: Observer):
-        self.observers.remove(observer)
+        self.observers.append(observer)
 
     def removeObserver(self, observer: Observer):
         self.observers.remove(observer)

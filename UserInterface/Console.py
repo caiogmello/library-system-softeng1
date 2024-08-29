@@ -9,7 +9,6 @@ from UserInterface.ExitCommand import ExitCommand
 from UserInterface.LoanItemCommand import LoanItemCommand
 from UserInterface.ReserveItemCommand import ReserveItemCommand
 from UserInterface.ReturnItemCommand import ReturnItemCommand
-
 class Console:
     _instance: Union["Console", None] = None
     commands: dict[str, LibraryCommand] = {}

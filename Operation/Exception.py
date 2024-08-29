@@ -1,17 +1,18 @@
 from Operation.Operation import Operation
-from User.User import User
-from Book.Book import Book
 
 class OperationException(Exception):
     def __init__(
         self,
         operationType: Operation,
-        user: User,
-        item: Book,
+        user: 'User',
+        bookId: int,
         reason: str,
     ):
         self.message = (
-            f"Operação '{operationType}' não pôde ser realizada para o usuário '{user.name}'"
-            f" e livro '{item.id}' pelo seguinte motivo: '{reason}'"
+            f"Operação de '{operationType.__name__}' não pôde ser realizada para o usuário '{user.name}'"
+            f" e livro '{bookId}' pelo seguinte motivo: '{reason}'"
         )
         super().__init__(self.message)
+
+    def __str__(self):
+        return self.message
