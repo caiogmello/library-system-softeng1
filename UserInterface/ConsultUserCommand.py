@@ -8,15 +8,15 @@ class ConsultUserCommand(LibraryCommand):
 
         if user is None:
             print(f"Usuário com ID {userId} não encontrado.")
-            return
+            return super().exec()
 
         loans = library.allLoansPerUser(user)
         reservations = library.allReservationsPerUser(user)
-        loanInfo = f"Empréstimos:" + "\n".join(
-            [f"  - {loan.getItem().getTitle()} - {loan.getItem().getId()}" for loan in loans]
+        loanInfo = f"\tEmpréstimos:\n" + "\n".join(
+            [f"\t{loan}" for loan in loans]
         )
-        reservationInfo = f"Reservas:" + "\n".join(
-            [f"  - {reservation.getItem().getTitle()} - {reservation.getItem().getId()}" for reservation in reservations]
+        reservationInfo = f"\tReservas:\n" + "\n".join(
+            [f"\t{reservation}" for reservation in reservations]
         )
         print(f"Usuário: {user.name}\n{loanInfo}\n{reservationInfo}")
         return super().exec()

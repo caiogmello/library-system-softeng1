@@ -34,7 +34,6 @@ class User:
         self.userState = UserNotIndebted()
 
     def loanBook(self, bookId: int) -> None:
-        # remove all reservations of that book
         while (bookCopy := CancelReservationIfExists().exec(self, bookId)) is not None:
             self.reservedBooks.remove(bookCopy)
     
@@ -48,7 +47,7 @@ class User:
         self.reservedBooks.append(bookCopy)
     
     def returnBook(self, bookId: int) -> None:
-        bookCopy = Devolution().exec(self, bookId)
+        Devolution().exec(self, bookId)
         self.removeLoan(bookId)
 
     def makeIndebted(self) -> None:
