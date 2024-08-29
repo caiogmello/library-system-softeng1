@@ -61,10 +61,13 @@ class Library:
         copy = book.reserveAnyCopy()
         if bookId not in self._reservations.keys():
             self._reservations[bookId] = []
+        if bookId not in self._historicReservations.keys():
+            self._historicReservations[bookId] = []
 
         if self.isReservedByUser(bookId, user):
             raise Exception(f"Usuário {user.name} já possui uma reserva para o livro ID={book.getId()}.")	
         self._reservations[bookId].append(ReservationItem(user, copy))
+        self._historicReservations[bookId].append(ReservationItem(user, copy))
         return copy
     
     def isReservedByUser(self, bookId: int, user: user.User) -> bool:
@@ -75,14 +78,46 @@ class Library:
                 return True
         return False
     
-    def unreserveBook(self, user: user.User, bookId: int) -> bool:
+    def unreserveBook(self, user: user.User, bookId: int) -> BookItem:
+        book = self.getBookById(bookId)
+        if book is None:
+            raise Exception(f"Livro ID={bookId} não encontrado.")
+
         if bookId not in self._reservations.keys():
-            return False
-        for reservation in self._reservations[bookId]:
-            if reservation.getUser() == user:
-                self._reservations[bookId].remove(reservation)
-                return True
-        return False
+            raise Exception(f"Livro ID={bookId} não está reservado por nenhum usuário.")
+
+        reservation = None
+        for registeredReservation in self._reservations[bookId]:
+            if registeredReservation.getUser() == user:
+                reservation = registeredReservation
+                break
+        if reservation is None:
+            raise Exception(f"Livro ID={bookId} não está reservado por {user.name}.")
+
+        copy = reservation.getItem()
+        book.returnReservedCopy(copy)
+        self._reservations[bookId].remove(reservation)
+
+        return copy
+    
+    def returnBook(self, user: user.User, bookId: int) -> None:
+        book = self.getBookById(bookId)
+        if book is None:
+            raise Exception(f"Livro ID={bookId} não encontrado.")
+
+        if bookId not in self._loans:
+            raise Exception(f"Livro ID={bookId} não está emprestado.")
+
+        loan = None
+        for registeredLoan in self._loans[bookId]:
+            if registeredLoan.getUser() == user:
+                loan = registeredLoan
+                break
+        if loan is None:
+            raise Exception(f"Usuário {user.name} não possui empréstimo do livro ID={bookId}.")
+        copy = loan.getItem()
+        book.returnLoanedCopy(copy)
+        self._loans[bookId].remove(loan)
 
     def loanBook(self, user: user.User, bookId: int) -> BookItem:
         book = self.getBookById(bookId)
@@ -91,10 +126,11 @@ class Library:
         copy = book.loanAnyCopy()
         if bookId not in self._loans.keys():
             self._loans[bookId] = []
-        self.unreserveBook(user, bookId)
-        self._loans[bookId].append(LoanItem(user, copy,
-                                             date.today(),
-                                               date.today() + timedelta(days=user.maxLoanTimeDays)))
+        if bookId not in self._historicLoans.keys():
+            self._historicLoans[bookId] = []
+
+        self._loans[bookId].append(LoanItem(user, copy, date.today(), date.today() + timedelta(days=user.maxLoanTimeDays)))
+        self._historicLoans[bookId].append(LoanItem(user, copy, date.today(), date.today() + timedelta(days=user.maxLoanTimeDays)))
         return copy
 
     def getReservations(self, bookId: int) -> list[ReservationItem]:
@@ -172,3 +208,17 @@ class Library:
 
         self.addBook(book, loan.getItem().getId())
         return True
+
+    def allLoansPerUser(self, user: user.User) -> list[LoanItem]:
+        loans = []
+        for loan in self._historicLoans:
+            if loan.getUser() == user:
+                loans.append(loan)
+        return loans
+
+    def allReservationsPerUser(self, user: user.User) -> list[ReservationItem]:
+        reservations = []
+        for reservation in self._historicReservations:
+            if reservation.getUser() == user:
+                reservations.append(reservation)
+        return reservations

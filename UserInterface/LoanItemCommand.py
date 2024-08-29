@@ -1,5 +1,6 @@
 from UserInterface.LibraryCommand import LibraryCommand
 import Library.Library as lib
+
 class LoanItemCommand(LibraryCommand):
     def exec(self, userId: int, bookId: int) -> None:
         library = lib.Library.getLibrary()
@@ -14,7 +15,10 @@ class LoanItemCommand(LibraryCommand):
             print(f"Livro com ID {bookId} não encontrado.")
             return
         
-        user.loanBook(bookId)
-        print(f"Livro {book.getTitle()} emprestado para {user.name}.")
-        # TODO implement this
+        try:
+            user.loanBook(bookId)
+            print(f"Livro {book.getTitle()} emprestado para {user.name}.")
+        except Exception as e:
+            print(f"Erro ao emprestar livro: {e.message}")
+        
         return super().exec()
