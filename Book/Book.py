@@ -22,6 +22,7 @@ class Book(Subject):
         self._edition = edition
         self._year = year
         self._copies = []
+        self._available = []
         self._reserved = []
         self._loaned = []
         self.observers = []
@@ -49,6 +50,7 @@ class Book(Subject):
 
     def addCopy(self, copyId: int) -> None:
         self._copies.append(BookItem(copyId, self._id))
+        self._available.append(self._copies[-1])
 
     def findCopyById(self, copyId: int) -> BookItem | None:
         for copy in self._copies:
@@ -59,17 +61,17 @@ class Book(Subject):
     def removeCopyById(self, copyId: int) -> None:
         item = self.findCopyById(copyId)
         if item is not None:
-            self._copies.remove(item)
+            self._available.remove(item)
     
     def removeAnyCopy(self) -> BookItem:
-        if len(self._copies) > 0:
-            return self._copies.pop()
+        if len(self._available) > 0:
+            return self._available.pop()
         else:
             return None
         
     def getAnyCopy(self) -> BookItem:
-        if len(self._copies) > 0:
-            return self._copies[-1]
+        if len(self._available) > 0:
+            return self._available[-1]
         else:
             return None
     
@@ -93,11 +95,11 @@ class Book(Subject):
 
     def returnReservedCopy(self, copy: BookItem) -> None:
         self._reserved.remove(copy)
-        self._copies.append(copy)
+        self._available.append(copy)
 
     def returnLoanedCopy(self, copy: BookItem) -> None:
         self._loaned.remove(copy)
-        self._copies.append(copy)
+        self._available.append(copy)
 
     def __str__(self) -> str:
         return f"""
