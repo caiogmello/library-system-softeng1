@@ -12,6 +12,7 @@ from UserInterface.ReturnItemCommand import ReturnItemCommand
 class Console:
     _instance: Union["Console", None] = None
     commands: dict[str, LibraryCommand] = {}
+    numArgs: dict[str, int] = {}
 
     @staticmethod
     def getConsole() -> "Console":
@@ -29,6 +30,10 @@ class Console:
         self.commands["ntf"] = CountNotificationsCommand()
         self.commands["sai"] = ExitCommand()
 
+        self.numArgs["emp"] = self.numArgs["dev"] = self.numArgs["res"] = self.numArgs["obs"] = 2
+        self.numArgs["liv"] = self.numArgs["usu"] = self.numArgs["ntf"] = 1
+        self.numArgs["sai"] = 0
+
     def __init__(self):
         self.initCommands()
 
@@ -37,6 +42,8 @@ class Console:
             options = input("Execute um comando: ").split()
             command = options[0]
             if command not in self.commands:
-                print(f"Comando inválido: esperado um dentre {','.join(self.commands.keys())}")
-            else:
+                print(f"Comando inválido: esperado um dentre {', '.join(self.commands.keys())}")
+            elif len(options) - 1 == self.numArgs[command]:
                 self.commands[command].exec(*options[1:])
+            else:
+                print(f"Comando {command} esperava {self.numArgs[command]} argumentos, mas recebeu {len(options) - 1}.")

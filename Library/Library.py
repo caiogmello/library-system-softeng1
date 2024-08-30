@@ -116,7 +116,6 @@ class Library:
         if loan is None:
             raise Exception(f"Usuário {user.name} não possui empréstimo do livro ID={bookId}.")
         copy = loan.getItem()
-        print(f"Devolvendo exemplar {copy.getId()} do livro {book.getTitle()}.")
         loan.closeLoan()
         book.returnLoanedCopy(copy)
         self._loans[bookId].remove(loan)
