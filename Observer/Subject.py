@@ -14,4 +14,4 @@ class Subject:
 
     def notifyObservers(self):
         for observer in self.observers:
-            observer.update()
+            observer.update(self)
