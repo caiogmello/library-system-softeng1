@@ -17,7 +17,7 @@ class ReturnItemCommand(LibraryCommand):
     
         try:
             user.returnBook(bookId)
-            print(f"O livro {book.getTitle} foi devolvido por {user.name} com sucesso.")
+            print(f"O livro {book.getTitle()} foi devolvido por {user.name} com sucesso.")
         except Exception as e:
             print(f"Erro ao devolver livro: {e.message}")
         return super().exec()
