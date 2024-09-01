@@ -1,4 +1,5 @@
-from UserInterface.LibraryCommand import LibraryCommand
+from Console.Command.LibraryCommand import LibraryCommand
+from Observer.Observer import Observer
 import Library.Library as lib
 
 class RegisterObserverCommand(LibraryCommand):
@@ -15,5 +16,12 @@ class RegisterObserverCommand(LibraryCommand):
             print(f"Livro com ID {bookId} não encontrado.")
             return
 
-        book.registerObserver(user)
+        try:
+            if isinstance(user, Observer):
+                book.registerObserver(user)
+                print(f"Usuário {user.name} registrado como observador do livro {book.getTitle()}.")
+            else:
+                print(f"Usuário {user.name} não pode ser registrado como observador.")
+        except Exception as e:
+            print(f"Erro ao registrar observador: {e.message}")
         return super().exec()

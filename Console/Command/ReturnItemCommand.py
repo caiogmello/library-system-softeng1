@@ -1,4 +1,4 @@
-from UserInterface.LibraryCommand import LibraryCommand
+from Console.Command.LibraryCommand import LibraryCommand
 import Library.Library as lib
 
 class ReturnItemCommand(LibraryCommand):
@@ -17,6 +17,7 @@ class ReturnItemCommand(LibraryCommand):
     
         try:
             user.returnBook(bookId)
+            print(f"O livro {book.getTitle()} foi devolvido por {user.name} com sucesso.")
         except Exception as e:
-            print(f"Erro ao emprestar livro: {e}")
+            print(f"Erro ao devolver livro: {e.message}")
         return super().exec()

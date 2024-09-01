@@ -50,4 +50,4 @@ class LoanItem:
         book = library.getBookById(self._loanedItem.getBookId())
         title = book.getTitle()
         devolutionDateLabel = "Data de devolução" if self._status == "Fechado" else "Data prevista de devolução"	
-        return f"- Título: {title}\n \t- Data do empréstimo: {self._loanDate}\n\t- Status: {self._status}\n\t- {devolutionDateLabel}: {self._devolutionDate}"
+        return f"- Título: {title}\n \t\t- Data do empréstimo: {self._loanDate}\n\t\t- Status: {self._status}\n\t\t- {devolutionDateLabel}: {self._devolutionDate}\n"

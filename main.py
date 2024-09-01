@@ -1,6 +1,6 @@
-from UserInterface.Console import Console
+from Console.Console import Console
 from Library.Library import Library
-from UserInterface.Data import getBooks, getUsers
+from Console.Data import getBooks, getUsers
 
 
 if __name__ == "__main__":

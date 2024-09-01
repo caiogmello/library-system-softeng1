@@ -24,4 +24,4 @@ class ReservationItem:
         library = lib.Library.getLibrary()
         book = library.getBookById(self._reservedItem.getBookId())
         title = book.getTitle()
-        return f"- Título: {title}\n \t- Data do reserva: {self._reservationDate}"
+        return f"- Título: {title}\n \t- Data da reserva: {self._reservationDate}"

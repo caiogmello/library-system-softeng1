@@ -1,4 +1,4 @@
-from UserInterface.LibraryCommand import LibraryCommand
+from Console.Command.LibraryCommand import LibraryCommand
 import Library.Library as lib
 
 class ReserveItemCommand(LibraryCommand):
@@ -19,5 +19,5 @@ class ReserveItemCommand(LibraryCommand):
             user.reserveBook(bookId)
             print(f"Reserva do livro {book.getTitle()} efetuada com sucesso para o usuário {user.name}.")
         except Exception as e:
-            print(f"Erro ao emprestar livro: {e}")
+            print(f"Erro ao emprestar livro: {e.message}")
         return super().exec()
