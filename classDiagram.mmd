@@ -1,0 +1,277 @@
+classDiagram
+    class Book {
+        +str getId()
+        +str getTitle()
+        +str getPublisher()
+        +list[str] getAuthors()
+        +str getEdition()
+        +str getYear()
+        +list[BookItem] getCopies()
+        +void addCopy(int copyId)
+        +BookItem | None findCopyById(int copyId)
+        +void removeCopyById(int copyId)
+        +BookItem removeAnyCopy()
+        +BookItem getAnyCopy()
+        +BookItem reserveAnyCopy()
+        +BookItem loanAnyCopy()
+        +void returnReservedCopy(BookItem copy)
+        +void returnLoanedCopy(BookItem copy)
+        +str __str__()
+    }
+
+    class BookItem {
+        +str getId()
+        +str getBookId()
+    }
+
+    class Library {
+        +Library getLibrary()
+        +Book | None getBookById(int bookId)
+        +void addBook(Book book, int copyId)
+        +void addBookByDict(dict bookDict)
+        +bool removeBook(Book | None book, int copyId)
+        +BookItem reserveBook(user.User user, int bookId)
+        +bool isReservedByUser(int bookId, user.User user)
+        +BookItem unreserveBook(user.User user, int bookId)
+        +void returnBook(user.User user, int bookId)
+        +BookItem loanBook(user.User user, int bookId)
+        +list[ReservationItem] getReservations(int bookId)
+        +ReservationItem | None findReservation(int bookId, int copyId)
+        +LoanItem | None findLoan(int bookId, int copyId)
+        +str getBookInfo(int bookId, int copyId)
+        +bool addUser(user.User user)
+        +user.User | None getUserById(int userId)
+        +list[LoanItem] allLoansPerUser(user.User user)
+        +list[ReservationItem] allReservationsPerUser(user.User user)
+    }
+
+    class LoanItem {
+        +BookItem getItem()
+        +User getUser()
+        +date getLoanDate()
+        +date getDevolutionDate()
+        +void closeLoan()
+        +bool isClosed()
+        +void openLoan()
+        +str __str__()
+    }
+
+    class ReservationItem {
+        +BookItem getItem()
+        +User getUser()
+        +str __str__()
+    }
+    
+    class Observer {
+        <<interface>>
+        +void update(*args, **kwargs)
+    }
+
+    class Subject {
+        <<abstract>>
+        -list[Observer] observers
+
+        +void registerObserver(Observer observer)
+        +void removeObserver(Observer observer)
+        +void notifyObservers()
+    }
+
+    class Operation {
+        <<interface>>
+        +BookItem exec(User user, int bookId)
+    }
+
+    class Reservation {
+        +BookItem exec(User user, int bookId)
+    }
+
+    class Devolution {
+        +BookItem exec(User user, int bookId)
+    }
+
+    class CancelReservation {
+        +BookItem exec(User user, int bookId)
+    }
+
+    class Loan {
+        <<interface>>
+        +BookItem exec(User user, int bookId)
+    }
+
+    class ProfessorLoan {
+        +BookItem exec(User user, int bookId)
+    }
+
+    class StudentLoan {
+        +BookItem exec(User user, int bookId)
+    }
+
+    class Exception {
+        <<builtin>>
+    }
+
+    class OperationException {
+        +str __str__()
+    }
+    OperationException --|> Exception
+
+    Reservation ..|> Operation
+    Devolution ..|> Operation
+    CancelReservation ..|> Operation
+    Loan ..|> Operation
+    ProfessorLoan ..|> Loan
+    StudentLoan ..|> Loan
+    
+    Book --|> Subject
+    Book *-- BookItem
+
+    Library *-- Book
+    Library *-- Operation
+    Library *-- ReservationItem
+    Library *-- LoanItem
+    Library *-- User
+
+    LoanItem *-- User
+    LoanItem *-- BookItem
+
+    ReservationItem *-- User
+    ReservationItem *-- BookItem
+
+    Subject *-- Observer
+
+    Operation *-- Book
+
+    %% User section
+    class User {
+        -str id
+        -str name
+        -int maxLoanTimeDays
+        -Final[int | None] maxOpenLoanOperations
+        -Final[int] maxReservedBooks
+        -Loan loanOperation
+        -Reservation reserveOperation
+        -Devolution devolutionOperation
+        -list[BookItem] loanedBooks
+        -list[BookItem] reservedBooks
+        -UserState userState
+
+        +void loanBook(int bookId)
+        +void reserveBook(int bookId)
+        +void returnBook(int bookId)
+        +void makeIndebted()
+        +void makeNotIndebted()
+        +void removeLoan(int bookId)
+        +bool hasReservation(int bookId)
+        +bool hasLoan(int bookId)
+    }
+
+    class Professor {
+        +int getNotificationCount()
+    }
+
+    class UndergraduateStudent {
+    }
+
+    class PostgraduateStudent {
+    }
+
+    UndergraduateStudent --|> User
+    UndergraduateStudent *-- StudentLoan
+    PostgraduateStudent --|> User
+    PostgraduateStudent *-- StudentLoan
+
+    Professor --|> User
+    Professor ..|> Observer
+    Professor *-- Book
+
+    User *-- Loan
+    User *-- Reservation
+    User *-- Devolution
+    User *-- BookItem
+
+    %% "State" design pattern
+    User *-- UserState
+
+    class UserState {
+        <<interface>>
+        +BookItem loanBook(User user, int bookId)
+    }
+
+    class UserIndebted {
+        +void loanBook(User user, int bookId)
+    }
+
+    class UserNotIndebted {
+        +BookItem loanBook(User user, int bookId)
+    }
+
+    UserIndebted ..|> UserState
+    UserNotIndebted ..|> UserState
+
+    %% Console
+
+    class LibraryCommand {
+        <<interface>>
+        +void exec(*args)
+    }
+
+    class ConsultItemCommand {
+        +void exec(int bookId)
+    }
+
+    class ConsultUserCommand {
+        +void exec(int userId)
+    }
+
+    class CountNotificationsCommand {
+        +void exec(int userId)
+    }
+
+    class ExitCommand {
+        +void exec()
+    }
+
+    class LoanItemCommand {
+        +void exec(int userId, int bookId)
+    }
+    
+    class RegisterObserverCommand {
+        +void exec(int userId, int bookId)
+    }
+
+    class ReserveItemCommand {
+        +void exec(int userId, int bookId)
+    }
+
+    class ReturnItemCommand {
+        +void exec(int userId, int bookId)
+    }
+
+    ConsultItemCommand ..|> LibraryCommand
+    ConsultUserCommand ..|> LibraryCommand
+    CountNotificationsCommand ..|> LibraryCommand
+    ExitCommand ..|> LibraryCommand
+    LoanItemCommand ..|> LibraryCommand
+    RegisterObserverCommand ..|> LibraryCommand
+    ReserveItemCommand ..|> LibraryCommand
+    ReturnItemCommand ..|> LibraryCommand
+
+    class Console {
+        +static Console getConsole()
+        +void initCommands()
+        +void service()
+    }
+    
+    Console --* LoanItemCommand
+    Console --* ReturnItemCommand
+    Console --* ReserveItemCommand
+    Console --* RegisterObserverCommand
+    Console --* ConsultItemCommand
+    Console --* ConsultUserCommand
+    Console --* CountNotificationsCommand
+    Console --* ExitCommand
+
+    class Factory {
+        +static Book createBook(bookId: int, title: str, publisher: str, authors: list[str], edition: str, year: str) : Book
+        +static Book createBookFromDict(bookDict: dict) : Book
+    }
