@@ -1,4 +1,4 @@
-from UserInterface.LibraryCommand import LibraryCommand
+from Console.Command.LibraryCommand import LibraryCommand
 from Observer.Observer import Observer
 import Library.Library as lib
 

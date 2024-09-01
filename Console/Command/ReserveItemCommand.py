@@ -1,7 +1,7 @@
-from UserInterface.LibraryCommand import LibraryCommand
+from Console.Command.LibraryCommand import LibraryCommand
 import Library.Library as lib
 
-class ReturnItemCommand(LibraryCommand):
+class ReserveItemCommand(LibraryCommand):
     def exec(self, userId: int, bookId: int) -> None:
         library = lib.Library.getLibrary()
         user = library.getUserById(userId)
@@ -14,10 +14,10 @@ class ReturnItemCommand(LibraryCommand):
         if book is None:
             print(f"Livro com ID {bookId} não encontrado.")
             return
-    
+        
         try:
-            user.returnBook(bookId)
-            print(f"O livro {book.getTitle()} foi devolvido por {user.name} com sucesso.")
+            user.reserveBook(bookId)
+            print(f"Reserva do livro {book.getTitle()} efetuada com sucesso para o usuário {user.name}.")
         except Exception as e:
-            print(f"Erro ao devolver livro: {e.message}")
+            print(f"Erro ao emprestar livro: {e.message}")
         return super().exec()

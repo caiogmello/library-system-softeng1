@@ -1,4 +1,4 @@
-from UserInterface.LibraryCommand import LibraryCommand
+from Console.Command.LibraryCommand import LibraryCommand
 import Library.Library as lib
 
 class LoanItemCommand(LibraryCommand):

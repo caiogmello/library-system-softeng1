@@ -1,14 +1,14 @@
 from typing import Union
 
-from UserInterface.LibraryCommand import LibraryCommand
-from UserInterface.ConsultItemCommand import ConsultItemCommand
-from UserInterface.ConsultUserCommand import ConsultUserCommand
-from UserInterface.CountNotificationsCommand import CountNotificationsCommand
-from UserInterface.RegisterObserverCommand import RegisterObserverCommand
-from UserInterface.ExitCommand import ExitCommand
-from UserInterface.LoanItemCommand import LoanItemCommand
-from UserInterface.ReserveItemCommand import ReserveItemCommand
-from UserInterface.ReturnItemCommand import ReturnItemCommand
+from Console.Command.LibraryCommand import LibraryCommand
+from Console.Command.ConsultItemCommand import ConsultItemCommand
+from Console.Command.ConsultUserCommand import ConsultUserCommand
+from Console.Command.CountNotificationsCommand import CountNotificationsCommand
+from Console.Command.RegisterObserverCommand import RegisterObserverCommand
+from Console.Command.ExitCommand import ExitCommand
+from Console.Command.LoanItemCommand import LoanItemCommand
+from Console.Command.ReserveItemCommand import ReserveItemCommand
+from Console.Command.ReturnItemCommand import ReturnItemCommand
 class Console:
     _instance: Union["Console", None] = None
     commands: dict[str, LibraryCommand] = {}

@@ -1,4 +1,4 @@
-from UserInterface.LibraryCommand import LibraryCommand
+from Console.Command.LibraryCommand import LibraryCommand
 
 class ExitCommand(LibraryCommand):
     def exec(self) -> None:
