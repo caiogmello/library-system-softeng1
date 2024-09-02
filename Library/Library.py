@@ -5,7 +5,7 @@ import User.User as user
 from Book.Book import Book
 from Book.BookItem import BookItem
 from Operation.Operation import Operation
-from UserInterface.Factory import Factory
+from Console.Factory import Factory
 from Library.LoanItem import LoanItem
 from Library.ReservationItem import ReservationItem
 
