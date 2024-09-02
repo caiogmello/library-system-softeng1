@@ -23,5 +23,5 @@ class RegisterObserverCommand(LibraryCommand):
             else:
                 print(f"Usuário {user.name} não pode ser registrado como observador.")
         except Exception as e:
-            print(f"Erro ao registrar observador: {e.message}")
+            print(f"Erro ao registrar observador: {e}")
         return super().exec()
